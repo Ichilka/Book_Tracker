@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Book Tracker</h1>
+    <div class="container">
+        <!-- Finished Books -->
+        <div class="column">
+            <h2>📘 Finished Books</h2>
+            {% for book in books if book.status == 'Finished' %}
+            <div class="book-card">
+                {% if book.image_url %}
+                <img src="{{ book.image_url }}" alt="{{ book.title }}" class="book-cover">
+                {% endif %}
+                <h3>{{ book.title }}</h3>
+                <p>By {{ book.author }}</p>
+                <!-- Enhanced Delete Button -->
+                <a href="{{ url_for('delete_book', book_id=book.id) }}" class="delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- In Progress Books -->
+        <div class="column">
+            <h2>📖 In Progress</h2>
+            {% for book in books if book.status == 'In Progress' %}
+            <div class="book-card">
+                {% if book.image_url %}
+                <img src="{{ book.image_url }}" alt="{{ book.title }}" class="book-cover">
+                {% endif %}
+                <h3>{{ book.title }}</h3>
+                <p>By {{ book.author }}</p>
+                <a href="{{ url_for('delete_book', book_id=book.id) }}" class="delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Want to Read Books -->
+        <div class="column">
+            <h2>📚 Want to Read</h2>
+            {% for book in books if book.status == 'Want to Read' %}
+            <div class="book-card">
+                {% if book.image_url %}
+                <img src="{{ book.image_url }}" alt="{{ book.title }}" class="book-cover">
+                {% endif %}
+                <h3>{{ book.title }}</h3>
+                <p>By {{ book.author }}</p>
+                <a href="{{ url_for('delete_book', book_id=book.id) }}" class="delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Add Book Button -->
+    <button class="add-book-btn" onclick="toggleModal()">Add Book</button>
+
+    <!-- Add Book Modal -->
+    <div id="addBookModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal()">&times;</span>
+            <form action="{{ url_for('add_book') }}" method="POST" class="add-form">
+                <label for="title">Book Title:</label>
+                <input list="book-titles" type="text" id="title" name="title" required>
+                <datalist id="book-titles">
+                    {% for book in books %}
+                    <option value="{{ book.title }}">
+                    {% endfor %}
+                </datalist>
+
+                <label for="author">Author:</label>
+                <input list="book-authors" type="text" id="author" name="author" required>
+                <datalist id="book-authors">
+                    {% for book in books %}
+                    <option value="{{ book.author }}">
+                    {% endfor %}
+                </datalist>
+
+                <label for="status">Status:</label>
+                <select id="status" name="status" required>
+                    <option value="Finished">Finished</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Want to Read">Want to Read</option>
+                </select>
+
+                <button type="submit">Add Book</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal() {
+            const modal = document.getElementById('addBookModal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            document.body.style.overflow = modal.style.display === 'block' ? 'hidden' : 'auto'; /* Disable body scroll when modal is open */
+        }
+    </script>
+</body>
+</html>
